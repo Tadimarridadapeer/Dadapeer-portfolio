@@ -8,7 +8,7 @@ export function Footer() {
           © {new Date().getFullYear()} Tadimarri Dadapeer. All rights reserved.
         </p>
         <div className="flex gap-6">
-          <Link href="mailto:dadapeer.personal@gmail.com" className="text-sm text-secondary hover:text-primary transition-colors">
+          <Link href="mailto:tadimarridadapeer@gmail.com" className="text-sm text-secondary hover:text-primary transition-colors">
             Email
           </Link>
           <Link href="https://www.linkedin.com/in/dada-peer-/" target="_blank" rel="noopener noreferrer" className="text-sm text-secondary hover:text-primary transition-colors">

@@ -11,14 +11,14 @@ export function Contact() {
         </p>
         <div className="flex flex-col sm:flex-row gap-4 mt-6">
           <Link
-            href="mailto:dadapeer.personal@gmail.com"
+            href="mailto:tadimarridadapeer@gmail.com"
             className="inline-flex items-center justify-center h-14 px-10 rounded-full bg-primary text-background font-medium hover:bg-primary/90 transition-all text-lg group"
           >
             Email Me
             <ArrowRight className="ml-3 w-5 h-5 group-hover:translate-x-1 transition-transform" />
           </Link>
           <Link
-            href="https://dadapeer.vercel.app/DADAPEER_RESUME.pdf"
+            href="/Tadimarri Dadapeer-AI Product Enigneer-Resume.pdf"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center justify-center h-14 px-10 rounded-full border border-border text-primary font-medium hover:bg-secondary/5 transition-all text-lg"
@@ -27,7 +27,7 @@ export function Contact() {
           </Link>
         </div>
         <p className="mt-8 text-secondary flex flex-col items-center gap-2">
-          <span>dadapeer.personal@gmail.com</span>
+          <span>tadimarridadapeer@gmail.com</span>
           <span>+91 96666 15118</span>
         </p>
       </div>
