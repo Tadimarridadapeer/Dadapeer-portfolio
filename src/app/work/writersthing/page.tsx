@@ -20,7 +20,7 @@ export default function WritersthingCaseStudy() {
         teamSize="Solo / AI-Assisted"
         status="Beta / Launching Soon"
         platform="Web Application (SaaS)"
-        liveUrl="https://writersthing-testing.vercel.app/"
+        liveUrl="https://writersthing.com/"
         heroImage="/projects_images/writersthing-hero.png"
       />
 
@@ -48,24 +48,24 @@ export default function WritersthingCaseStudy() {
       </TextSection>
 
       {/* 4. My Role & 5. Solution */}
-      <CardGrid 
-        title="Strategy & Solution" 
+      <CardGrid
+        title="Strategy & Solution"
         items={[
           { title: "My Role", description: "Architected and executed the entire platform from the ground up, including product strategy, UX/UI, Next.js frontend, Express API, Supabase architecture, and Stripe payments.", tag: "Ownership" },
           { title: "Product Vision", description: "To become the default operating system for independent digital publishing, where the transition from drafting to monetization happens in a single click.", tag: "Vision" },
           { title: "Information Architecture", description: "The platform is bifurcated into the 'Creator Studio' for manuscript management and payouts, and the 'Reader Portal' for discovery and consumption.", tag: "Architecture" },
           { title: "Key UX Decisions", description: "Prioritized a typography-first approach and a distraction-free mode where the editor and reader collapse all navigation elements when scrolling or typing.", tag: "UX/UI" }
-        ]} 
+        ]}
       />
 
       {/* 6. Core Features */}
-      <CardGrid 
-        title="Core Features" 
+      <CardGrid
+        title="Core Features"
         items={[
           { title: "Unified Manuscript Editor", description: "A rich-text, block-based editor optimized for long-form content. Eliminates the need to draft in Word and painfully format for the web later. Kept performant at 100k+ words via virtualization.", tag: "Feature" },
           { title: "Frictionless E-Commerce", description: "Integrated Stripe Connect to handle complex multi-party routing, ensuring authors receive payouts automatically while remaining compliant with international tax regulations.", tag: "Monetization" },
           { title: "Responsive Web Reader", description: "A premium reading interface that adapts to any device, offering dark mode, font scaling, and bookmarking. Progress syncs accurately across all devices via the database.", tag: "Experience" }
-        ]} 
+        ]}
       />
 
       {/* 7. AI Implementation */}
@@ -92,14 +92,14 @@ export default function WritersthingCaseStudy() {
       </TextSection>
 
       {/* 10. Outcomes & 11. Future Roadmap */}
-      <CardGrid 
-        title="Outcomes & Roadmap" 
+      <CardGrid
+        title="Outcomes & Roadmap"
         items={[
           { title: "Product Outcomes", description: "Delivered a fully functional Beta platform that successfully manages the entire lifecycle of a digital book from draft to monetization.", tag: "Results" },
           { title: "Technical Outcomes", description: "Architected a scalable database schema capable of handling high-volume read traffic and complex write operations, with seamless multi-party payment routing.", tag: "Engineering" },
           { title: "Future: Audiobook Integration", description: "Implementing advanced Text-to-Speech (TTS) models to automatically generate high-fidelity audiobooks from written manuscripts.", tag: "Roadmap" },
           { title: "Future: Offline Reading", description: "Utilizing Progressive Web App (PWA) technologies and IndexedDB to allow readers to download books for offline consumption in the browser.", tag: "Roadmap" }
-        ]} 
+        ]}
       />
 
       {/* 12. Key Takeaways */}
@@ -110,25 +110,25 @@ export default function WritersthingCaseStudy() {
       </TextSection>
 
       {/* 13. Tech Stack */}
-      <TechStack 
+      <TechStack
         categories={[
           { name: "Frontend", technologies: ["Next.js", "React", "Tailwind CSS", "Framer Motion"] },
           { name: "Backend", technologies: ["Express.js", "Node.js"] },
           { name: "Database & Auth", technologies: ["Supabase", "PostgreSQL", "Supabase Auth"] },
           { name: "Payments & Cloud", technologies: ["Stripe Connect", "Supabase Storage"] }
-        ]} 
+        ]}
       />
 
 
       {/* 15. Related Projects */}
       <section className="w-full max-w-7xl mx-auto px-6 py-24 md:py-32 border-t border-border flex flex-col items-center text-center">
-         <h2 className="text-3xl md:text-5xl font-medium tracking-tight text-primary mb-12">Next Project</h2>
-         <Link href="/work/kollimalai" className="group">
-           <p className="text-secondary tracking-widest uppercase text-sm mb-4">View Case Study</p>
-           <div className="flex items-center gap-4 text-4xl md:text-6xl font-medium text-primary group-hover:text-accent transition-colors">
-              Kollimalai Natural Store <ArrowRight className="w-8 h-8 md:w-12 md:h-12 group-hover:translate-x-2 transition-transform" />
-           </div>
-         </Link>
+        <h2 className="text-3xl md:text-5xl font-medium tracking-tight text-primary mb-12">Next Project</h2>
+        <Link href="/work/kollimalai" className="group">
+          <p className="text-secondary tracking-widest uppercase text-sm mb-4">View Case Study</p>
+          <div className="flex items-center gap-4 text-4xl md:text-6xl font-medium text-primary group-hover:text-accent transition-colors">
+            Kollimalai Natural Store <ArrowRight className="w-8 h-8 md:w-12 md:h-12 group-hover:translate-x-2 transition-transform" />
+          </div>
+        </Link>
       </section>
 
     </CaseStudyLayout>

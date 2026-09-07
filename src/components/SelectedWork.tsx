@@ -53,6 +53,40 @@ const projects = [
     liveUrl: "https://www.kollimalainaturalstore.com/",
     previewImage: "/projects_images/kollimalai-hero.png"
   },
+  {
+    id: "crossmotive",
+    name: "CrossMotive Services",
+    category: "BPO & Enterprise Operations Platform",
+    description: "A comprehensive BPO and enterprise outsourcing platform providing specialized services across data annotation, financial operations, IT administration, real estate back-office, and travel operations management.",
+    status: "Live",
+    keyContributions: [
+      "End-to-end platform design and frontend architecture.",
+      "Service workflow optimization across multi-domain BPO operations.",
+      "Integration of data annotation and IT management dashboards.",
+      "Client portal interface engineering and security compliance.",
+      "Performance optimization and cloud infrastructure deployment."
+    ],
+    year: "2026",
+    liveUrl: "https://www.crossmotiveservices.com/",
+    previewImage: "/projects_images/crossmotive-hero.png"
+  },
+  {
+    id: "vegetabletonnes",
+    name: "VegetableTonnes",
+    category: "B2B AgriTech • Auction Platform",
+    description: "India's premier B2B agriculture bidding and marketplace platform designed to directly connect farmers with bulk buyers and wholesalers through real-time digital auctions, bypassing intermediate supply chain markups.",
+    status: "Live",
+    keyContributions: [
+      "Direct farm-to-buyer bidding marketplace design & engineering.",
+      "Real-time auction engine & price discovery mechanism.",
+      "Produce inventory cataloging and trade management workflows.",
+      "Mobile-responsive frontend with ultra-low latency updates.",
+      "Scalable backend architecture for high-volume agricultural trades."
+    ],
+    year: "2026",
+    liveUrl: "https://www.vegetabletonnes.com/",
+    previewImage: "/projects_images/vegetabletonnes-hero.png"
+  },
 ];
 
 export function SelectedWork() {

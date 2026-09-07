@@ -111,10 +111,10 @@ export default function KollimalaiCaseStudy() {
       {/* 14. Related Projects */}
       <section className="w-full max-w-7xl mx-auto px-6 py-24 md:py-32 border-t border-border flex flex-col items-center text-center">
          <h2 className="text-3xl md:text-5xl font-medium tracking-tight text-primary mb-12">Next Project</h2>
-         <Link href="/work/pstylst" className="group">
+         <Link href="/work/crossmotive" className="group">
            <p className="text-secondary tracking-widest uppercase text-sm mb-4">View Case Study</p>
            <div className="flex items-center gap-4 text-4xl md:text-6xl font-medium text-primary group-hover:text-accent transition-colors">
-              P'STYLST <ArrowRight className="w-8 h-8 md:w-12 md:h-12 group-hover:translate-x-2 transition-transform" />
+              CrossMotive Services <ArrowRight className="w-8 h-8 md:w-12 md:h-12 group-hover:translate-x-2 transition-transform" />
            </div>
          </Link>
       </section>
