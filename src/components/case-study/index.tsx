@@ -118,7 +118,7 @@ export function Hero({
 // Text Section (Used for Exec Summary, Problem, Vision, Strategy, etc.)
 export function TextSection({ title, label, children }: { title: string; label?: string; children: ReactNode }) {
   return (
-    <section className="w-full max-w-4xl px-6 py-24 md:py-32">
+    <section className="w-full max-w-4xl px-6 py-12 md:py-16">
       <FadeIn>
         {label && <p className="text-accent text-sm font-semibold tracking-widest uppercase mb-4">{label}</p>}
         <h2 className="text-3xl md:text-5xl font-medium tracking-tight text-primary mb-12">{title}</h2>
@@ -133,7 +133,7 @@ export function TextSection({ title, label, children }: { title: string; label?:
 // Metric Dashboard Section
 export function MetricsDashboard({ metrics }: { metrics: { label: string, value: string, suffix?: string }[] }) {
   return (
-    <section className="w-full max-w-7xl px-6 py-24 md:py-32">
+    <section className="w-full max-w-7xl px-6 py-12 md:py-16">
       <FadeIn>
         <h2 className="text-3xl md:text-5xl font-medium tracking-tight text-primary mb-16 text-center">Impact & Results</h2>
       </FadeIn>
@@ -154,7 +154,7 @@ export function MetricsDashboard({ metrics }: { metrics: { label: string, value:
 // Feature/Challenge Card Grid
 export function CardGrid({ title, items }: { title: string, items: { title: string, description: string, tag?: string }[] }) {
   return (
-    <section className="w-full max-w-7xl px-6 py-24 md:py-32">
+    <section className="w-full max-w-7xl px-6 py-12 md:py-16">
       <FadeIn>
         <h2 className="text-3xl md:text-5xl font-medium tracking-tight text-primary mb-16">{title}</h2>
       </FadeIn>
@@ -174,7 +174,7 @@ export function CardGrid({ title, items }: { title: string, items: { title: stri
 // Architecture/Diagram Placeholder
 export function DiagramPlaceholder({ title, description }: { title: string, description: string }) {
   return (
-    <section className="w-full max-w-7xl px-6 py-24 md:py-32">
+    <section className="w-full max-w-7xl px-6 py-12 md:py-16">
        <FadeIn>
           <div className="text-center mb-16 max-w-3xl mx-auto">
             <h2 className="text-3xl md:text-5xl font-medium tracking-tight text-primary mb-6">{title}</h2>
@@ -192,7 +192,7 @@ export function DiagramPlaceholder({ title, description }: { title: string, desc
 // Tech Stack Grid
 export function TechStack({ categories }: { categories: { name: string, technologies: string[] }[] }) {
   return (
-    <section className="w-full max-w-7xl px-6 py-24 md:py-32 border-t border-border mt-16">
+    <section className="w-full max-w-7xl px-6 py-12 md:py-16 border-t border-border mt-16">
       <FadeIn>
         <h2 className="text-3xl md:text-5xl font-medium tracking-tight text-primary mb-16 text-center">Technology Stack</h2>
       </FadeIn>
@@ -215,7 +215,7 @@ export function TechStack({ categories }: { categories: { name: string, technolo
 // Image Gallery
 export function ImageGallery({ images }: { images: { label: string }[] }) {
   return (
-    <section className="w-full max-w-[100rem] mx-auto px-6 py-24 md:py-32">
+    <section className="w-full max-w-[100rem] mx-auto px-6 py-12 md:py-16">
        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
          {images.map((img, i) => (
             <FadeIn key={i} delay={i * 0.1} className={`w-full ${i === 0 ? 'md:col-span-2 lg:col-span-3 aspect-[21/9]' : 'aspect-[4/3]'} bg-secondary/5 border border-border rounded-3xl flex items-center justify-center overflow-hidden hover:scale-[1.02] transition-transform duration-500`}>

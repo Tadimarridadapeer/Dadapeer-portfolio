@@ -18,9 +18,9 @@ export default function WritersthingCaseStudy() {
         vision="A modern publishing ecosystem built for writers and readers to publish, manage, and distribute digital books through an intuitive and scalable platform."
         role="Product Engineer (End-to-End)"
         teamSize="Solo / AI-Assisted"
-        status="Beta / Launching Soon"
+        status="Live"
         platform="Web Application (SaaS)"
-        liveUrl="https://writersthing.com/"
+        liveUrl="https://www.writersthing.com/"
         heroImage="/projects_images/writersthing-hero.png"
       />
 
@@ -121,7 +121,7 @@ export default function WritersthingCaseStudy() {
 
 
       {/* 15. Related Projects */}
-      <section className="w-full max-w-7xl mx-auto px-6 py-24 md:py-32 border-t border-border flex flex-col items-center text-center">
+      <section className="w-full max-w-7xl mx-auto px-6 py-12 md:py-16 border-t border-border flex flex-col items-center text-center">
         <h2 className="text-3xl md:text-5xl font-medium tracking-tight text-primary mb-12">Next Project</h2>
         <Link href="/work/kollimalai" className="group">
           <p className="text-secondary tracking-widest uppercase text-sm mb-4">View Case Study</p>

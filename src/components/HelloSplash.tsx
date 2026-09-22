@@ -23,14 +23,14 @@ export function HelloSplash() {
     if (index < GREETINGS.length - 1) {
       const timer = setTimeout(() => {
         setIndex((prev) => prev + 1);
-      }, 850);
+      }, 450);
       return () => clearTimeout(timer);
     } else {
       // Hold the final greeting comfortably, then slide up and unlock scroll
       const timer = setTimeout(() => {
         setIsVisible(false);
         document.body.style.overflow = "auto";
-      }, 1200);
+      }, 750);
       return () => clearTimeout(timer);
     }
   }, [index]);
@@ -60,17 +60,17 @@ export function HelloSplash() {
           <div className="absolute w-[30rem] h-[30rem] bg-primary/5 rounded-full blur-3xl pointer-events-none" />
 
           {/* Central Hello Container */}
-          <div className="relative flex flex-col items-center justify-center min-h-[200px]">
-            <AnimatePresence mode="wait">
+          <div className="relative flex items-center justify-center w-full min-h-[200px]">
+            <AnimatePresence>
               <motion.div
                 key={index}
-                initial={{ opacity: 0, y: 20, filter: "blur(10px)", scale: 0.92 }}
+                initial={{ opacity: 0, y: 20, filter: "blur(10px)", scale: 0.95 }}
                 animate={{ opacity: 1, y: 0, filter: "blur(0px)", scale: 1 }}
-                exit={{ opacity: 0, y: -20, filter: "blur(10px)", scale: 1.08 }}
-                transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-                className="flex flex-col items-center text-center px-6"
+                exit={{ opacity: 0, y: -20, filter: "blur(10px)", scale: 1.05 }}
+                transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                className="absolute flex flex-col items-center text-center px-6 w-full"
               >
-                <h1 className="text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-medium tracking-tight text-primary leading-none">
+                <h1 className="text-5xl sm:text-7xl md:text-8xl lg:text-9xl font-medium tracking-tight text-primary leading-none whitespace-nowrap">
                   {GREETINGS[index].text}
                 </h1>
                 

@@ -3,7 +3,7 @@ import { ArrowRight } from "lucide-react";
 
 export function Contact() {
   return (
-    <section id="contact" className="w-full py-24 md:py-32 border-t border-border">
+    <section id="contact" className="w-full py-12 md:py-16 border-t border-border">
       <div className="flex flex-col items-center text-center max-w-3xl mx-auto">
         <h2 className="text-4xl md:text-5xl font-semibold text-primary mb-6">Let's build something.</h2>
         <p className="text-xl text-secondary mb-10">

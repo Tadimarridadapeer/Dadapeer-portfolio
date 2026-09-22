@@ -101,7 +101,7 @@ const coreCompetencies = [
 
 export function Engineering() {
   return (
-    <section id="engineering" className="w-full py-24 md:py-32 border-t border-border">
+    <section id="engineering" className="w-full py-12 md:py-16 border-t border-border">
       
       {/* Introduction */}
       <div className="mb-20 md:mb-24">

@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export function Footer() {
   return (
-    <footer className="w-full border-t border-border mt-32 py-12">
+    <footer className="w-full border-t border-border mt-16 py-12">
       <div className="w-full max-w-[1280px] mx-auto px-6 md:px-12 lg:px-24 xl:px-32 flex flex-col md:flex-row justify-between items-center gap-4">
         <p className="text-sm text-secondary">
           © {new Date().getFullYear()} Tadimarri Dadapeer. All rights reserved.

@@ -97,7 +97,7 @@ export function Posters() {
   };
 
   return (
-    <section id="posters" className="w-full py-24 md:py-32 border-t border-border bg-background relative overflow-hidden">
+    <section id="posters" className="w-full py-12 md:py-16 border-t border-border bg-background relative overflow-hidden">
       <div className="flex flex-col items-center max-w-7xl mx-auto px-6">
         <h2 className="text-4xl md:text-5xl font-semibold text-primary mb-16 tracking-tight">Posters</h2>
         

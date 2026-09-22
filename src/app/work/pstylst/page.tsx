@@ -17,10 +17,10 @@ export default function PstylstCaseStudy() {
         name="P'STYLST"
         category="AI Product • Fashion Technology"
         vision="An AI-powered Personal Stylist Intelligence platform designed to help people make smarter fashion decisions with confidence."
-        role="Product Engineer (End-to-End)"
-        teamSize="Solo / AI-Assisted"
+        role="Founding AI Engineer, End to End"
+        teamSize="3 members with AI Assisted"
         status="Live"
-        platform="Web Application"
+        platform="Web Application & Mobile Application"
         liveUrl="https://www.pstylst.com/"
         heroImage="/projects_images/pstylst-hero.png"
       />
@@ -164,7 +164,7 @@ export default function PstylstCaseStudy() {
 
 
       {/* 25. Related Projects */}
-      <section className="w-full max-w-7xl mx-auto px-6 py-24 md:py-32 border-t border-border flex flex-col items-center text-center">
+      <section className="w-full max-w-7xl mx-auto px-6 py-12 md:py-16 border-t border-border flex flex-col items-center text-center">
          <h2 className="text-3xl md:text-5xl font-medium tracking-tight text-primary mb-12">Next Project</h2>
          <Link href="/work/writersthing" className="group">
            <p className="text-secondary tracking-widest uppercase text-sm mb-4">View Case Study</p>

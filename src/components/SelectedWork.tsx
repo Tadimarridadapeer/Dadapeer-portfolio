@@ -24,7 +24,7 @@ const projects = [
     name: "Writersthing",
     category: "Publishing Platform • SaaS",
     description: "A modern publishing ecosystem built for writers and readers to publish, manage, and distribute digital books through an intuitive and scalable platform.",
-    status: "Beta Version is available",
+    status: "Live",
     keyContributions: [
       "Product strategy and platform architecture.",
       "Publishing workflow design.",
@@ -33,7 +33,7 @@ const projects = [
       "End-to-end product engineering."
     ],
     year: "2026",
-    liveUrl: "https://writersthing-testing.vercel.app/",
+    liveUrl: "https://www.writersthing.com/",
     previewImage: "/projects_images/writersthing-hero.png"
   },
   {
@@ -91,7 +91,7 @@ const projects = [
 
 export function SelectedWork() {
   return (
-    <section id="work" className="w-full py-16 md:py-24 border-t border-border">
+    <section id="work" className="w-full py-12 md:py-16 border-t border-border">
       <div className="mb-12 md:mb-16">
         <h2 className="text-3xl md:text-5xl font-semibold text-primary mb-6">Product Case Studies</h2>
         <p className="text-xl text-secondary max-w-2xl leading-relaxed">
