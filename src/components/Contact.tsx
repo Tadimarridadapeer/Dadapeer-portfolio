@@ -28,7 +28,6 @@ export function Contact() {
         </div>
         <p className="mt-8 text-secondary flex flex-col items-center gap-2">
           <span>tadimarridadapeer@gmail.com</span>
-          <span>+91 96666 15118</span>
         </p>
       </div>
     </section>

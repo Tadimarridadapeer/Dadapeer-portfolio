@@ -1,4 +1,5 @@
 import { Hero } from "@/components/Hero";
+import { CoreCompetencies } from "@/components/CoreCompetencies";
 import { SelectedWork } from "@/components/SelectedWork";
 import { Engineering } from "@/components/Engineering";
 import { Writing } from "@/components/Writing";
@@ -10,9 +11,19 @@ export default function Home() {
   return (
     <div className="flex flex-col w-full">
       <Hero />
-      <SelectedWork />
-      <Engineering />
-      <Writing />
+      <div className="block md:hidden py-10 border-t border-border">
+        <CoreCompetencies />
+      </div>
+      <div className="hidden md:block">
+
+        <SelectedWork />
+      </div>
+      <div className="hidden md:block">
+        <Engineering />
+      </div>
+      <div className="hidden md:block">
+        <Writing />
+      </div>
       <About />
       {/* <Posters /> */}
       <Contact />

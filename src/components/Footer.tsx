@@ -1,9 +1,16 @@
 import Link from "next/link";
+import { BrickBuilderGame } from "@/components/BrickBuilderGame";
 
 export function Footer() {
   return (
     <footer className="w-full border-t border-border mt-16 py-12">
-      <div className="w-full max-w-[1280px] mx-auto px-6 md:px-12 lg:px-24 xl:px-32 flex flex-col md:flex-row justify-between items-center gap-4">
+      {/* Interactive Brick Builder Game Section — Spanning Full Width */}
+      <div className="w-full max-w-[1600px] mx-auto px-6 sm:px-8 md:px-10 lg:px-12 mb-12">
+        <BrickBuilderGame />
+      </div>
+
+      {/* Existing Footer Links and Copyright */}
+      <div className="w-full max-w-[1600px] mx-auto px-6 sm:px-8 md:px-10 lg:px-12 flex flex-col md:flex-row justify-between items-center gap-4 pt-8 border-t border-border/60">
         <p className="text-sm text-secondary">
           © {new Date().getFullYear()} Tadimarri Dadapeer. All rights reserved.
         </p>

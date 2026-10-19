@@ -1,4 +1,7 @@
-import { Lightbulb, Bot, MonitorSmartphone, Server, Database, PenTool, ArrowRight, ArrowDown } from "lucide-react";
+"use client";
+
+import { Lightbulb, Bot, MonitorSmartphone, Server, Database, PenTool, ArrowRight, ArrowDown, Quote, Sparkles } from "lucide-react";
+import { motion, type Variants } from "framer-motion";
 
 const capabilities = [
   {
@@ -99,6 +102,58 @@ const coreCompetencies = [
   "Cloud Deployment", "Cross-functional Collaboration", "Agile Product Development", "Continuous Product Improvement"
 ];
 
+const quoteWords = [
+  { text: '"I', highlight: false },
+  { text: "don't", highlight: false },
+  { text: "use", highlight: false },
+  { text: "AI", highlight: true },
+  { text: "to", highlight: false },
+  { text: "replace", highlight: false },
+  { text: "engineering.", highlight: false },
+  { text: "I", highlight: false },
+  { text: "use", highlight: false },
+  { text: "AI", highlight: true },
+  { text: "to", highlight: false },
+  { text: "accelerate", highlight: true },
+  { text: "thoughtful", highlight: true },
+  { text: "product", highlight: true },
+  { text: "development,", highlight: true },
+  { text: "reduce", highlight: false },
+  { text: "repetitive", highlight: false },
+  { text: "work,", highlight: false },
+  { text: "and", highlight: false },
+  { text: "spend", highlight: false },
+  { text: "more", highlight: false },
+  { text: "time", highlight: false },
+  { text: "solving", highlight: true },
+  { text: "meaningful", highlight: true },
+  { text: 'problems."', highlight: true },
+];
+
+const quoteContainerVariants: Variants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.04,
+      delayChildren: 0.2,
+    },
+  },
+};
+
+const quoteWordVariants: Variants = {
+  hidden: { opacity: 0, y: 12, filter: "blur(6px)" },
+  visible: {
+    opacity: 1,
+    y: 0,
+    filter: "blur(0px)",
+    transition: {
+      duration: 0.45,
+      ease: [0.2, 0.65, 0.3, 0.9] as const,
+    },
+  },
+};
+
 export function Engineering() {
   return (
     <section id="engineering" className="w-full py-12 md:py-16 border-t border-border">
@@ -165,25 +220,114 @@ export function Engineering() {
         </div>
       </div>
 
-      {/* Core Competencies */}
-      <div className="mb-32">
+      {/* Core Competencies — Smooth Infinite Scrolling Marquee */}
+      <div className="mb-32 w-full overflow-hidden">
         <h3 className="text-2xl md:text-3xl font-semibold text-primary mb-4 tracking-tight">Core Competencies</h3>
-        <p className="text-lg text-secondary mb-12">The skills and expertise that drive my product development workflow.</p>
-        <div className="flex flex-wrap gap-4">
-          {coreCompetencies.map((competency) => (
-            <span key={competency} className="px-5 py-2.5 rounded-full border border-border bg-secondary/5 text-primary font-medium text-sm hover:bg-secondary/10 transition-colors">
-              {competency}
-            </span>
-          ))}
+        <p className="text-lg text-secondary mb-10">The skills and expertise that drive my product development workflow.</p>
+        
+        <div className="flex flex-col gap-4 w-full overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_6%,black_94%,transparent)]">
+          {/* Row 1: Scrolling Left */}
+          <div className="relative w-full overflow-hidden py-1">
+            <motion.div
+              animate={{ x: ["0%", "-50%"] }}
+              transition={{ duration: 24, repeat: Infinity, ease: "linear" }}
+              className="flex w-max gap-4"
+            >
+              {[...coreCompetencies.slice(0, 8), ...coreCompetencies.slice(0, 8)].map((competency, idx) => (
+                <span
+                  key={idx}
+                  className="px-5 py-2.5 rounded-full border border-border bg-secondary/5 text-primary font-medium text-sm hover:bg-secondary/15 hover:border-accent/40 transition-colors shrink-0 whitespace-nowrap cursor-default shadow-sm"
+                >
+                  {competency}
+                </span>
+              ))}
+            </motion.div>
+          </div>
+
+          {/* Row 2: Scrolling Right */}
+          <div className="relative w-full overflow-hidden py-1">
+            <motion.div
+              animate={{ x: ["-50%", "0%"] }}
+              transition={{ duration: 28, repeat: Infinity, ease: "linear" }}
+              className="flex w-max gap-4"
+            >
+              {[...coreCompetencies.slice(8), ...coreCompetencies.slice(8)].map((competency, idx) => (
+                <span
+                  key={idx}
+                  className="px-5 py-2.5 rounded-full border border-border bg-secondary/5 text-primary font-medium text-sm hover:bg-secondary/15 hover:border-accent/40 transition-colors shrink-0 whitespace-nowrap cursor-default shadow-sm"
+                >
+                  {competency}
+                </span>
+              ))}
+            </motion.div>
+          </div>
         </div>
       </div>
 
       {/* Quote */}
-      <div className="pt-16 border-t border-border/50 text-center max-w-3xl mx-auto">
-        <p className="text-2xl md:text-3xl text-primary font-medium leading-relaxed italic">
-          "I don't use AI to replace engineering. I use AI to accelerate thoughtful product development, reduce repetitive work, and spend more time solving meaningful problems."
-        </p>
-      </div>
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-60px" }}
+        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+        className="relative mt-24 pt-16 pb-14 px-6 sm:px-12 md:px-16 rounded-3xl border border-border/80 bg-gradient-to-b from-secondary/[0.04] via-secondary/[0.015] to-transparent backdrop-blur-md max-w-4xl mx-auto overflow-hidden text-center shadow-2xl shadow-black/10"
+      >
+        {/* Ambient Pulsing Aura */}
+        <motion.div
+          animate={{ scale: [1, 1.2, 1], opacity: [0.25, 0.45, 0.25] }}
+          transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute -top-24 left-1/2 -translate-x-1/2 w-[420px] h-[360px] bg-gradient-to-r from-neutral-400/10 via-neutral-500/10 to-neutral-400/10 blur-3xl rounded-full -z-10 pointer-events-none"
+        />
+
+        {/* Top Edge Shimmer */}
+        <div className="absolute top-0 inset-x-12 h-[1px] bg-gradient-to-r from-transparent via-neutral-300/60 to-transparent" />
+
+        {/* Floating Quote Badge */}
+        <motion.div
+          animate={{ y: [0, -6, 0] }}
+          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+          className="w-12 h-12 mx-auto mb-6 rounded-2xl bg-secondary/10 border border-border flex items-center justify-center text-[#1c1d21] shadow-sm backdrop-blur-sm"
+        >
+          <Quote className="w-5 h-5 fill-secondary/20" />
+        </motion.div>
+
+        {/* Animated Staggered Words */}
+        <motion.p
+          variants={quoteContainerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-40px" }}
+          className="text-2xl sm:text-3xl md:text-4xl text-primary font-medium leading-relaxed tracking-tight flex flex-wrap justify-center gap-x-2 gap-y-1.5"
+        >
+          {quoteWords.map((item, index) => (
+            <motion.span
+              key={index}
+              variants={quoteWordVariants}
+              className={
+                item.highlight
+                  ? "text-[#1c1d21] font-semibold"
+                  : "text-secondary/80 font-normal"
+              }
+            >
+              {item.text}
+            </motion.span>
+          ))}
+        </motion.p>
+
+        {/* Attribution Badge */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.9 }}
+          className="mt-8 pt-6 border-t border-border/40 flex items-center justify-center gap-3 text-xs sm:text-sm text-secondary uppercase tracking-widest font-mono"
+        >
+          <Sparkles className="w-3.5 h-3.5 text-[#1c1d21]" />
+          <span>Philosophy & Approach</span>
+          <span className="w-1.5 h-1.5 rounded-full bg-[#1c1d21]/60" />
+          <span>Dadapeer</span>
+        </motion.div>
+      </motion.div>
 
     </section>
   );
