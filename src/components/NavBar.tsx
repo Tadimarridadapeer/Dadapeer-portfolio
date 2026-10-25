@@ -32,16 +32,19 @@ export function NavBar() {
         <Link 
           href="/" 
           onClick={() => setIsOpen(false)}
-          className="flex items-center gap-2.5 group transition-opacity hover:opacity-80"
+          className="flex items-center gap-3 group transition-opacity hover:opacity-85"
         >
           <Image 
-            src="/favicon.jpg" 
-            alt="Logo" 
-            width={24} 
-            height={24} 
-            className="rounded-full border border-border/50 group-hover:scale-105 transition-transform" 
+            src="/favicon.png" 
+            alt="Tadimarri Dadapeer Logo" 
+            width={44} 
+            height={44} 
+            className="w-9 h-9 md:w-10 md:h-10 object-contain rounded-md group-hover:scale-105 transition-transform" 
+            priority
           />
-          <span className="font-medium tracking-tight text-primary">Tadimarri Dadapeer</span>
+          <span className="font-semibold text-base sm:text-lg tracking-tight text-primary">
+            Tadimarri Dadapeer
+          </span>
         </Link>
 
         {/* Desktop Navigation */}

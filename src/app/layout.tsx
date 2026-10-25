@@ -19,7 +19,8 @@ export const metadata: Metadata = {
   title: "Tadimarri Dadapeer | AI Product Engineer",
   description: "I build AI-powered digital products from idea to production.",
   icons: {
-    icon: "/favicon.jpg",
+    icon: "/favicon.png",
+    apple: "/favicon.png",
   }
 };
 

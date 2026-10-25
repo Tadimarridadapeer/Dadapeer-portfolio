@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { BrickBuilderGame } from "@/components/BrickBuilderGame";
+import { VisitorCounter } from "@/components/VisitorCounter";
 
 export function Footer() {
   return (
@@ -11,9 +12,12 @@ export function Footer() {
 
       {/* Existing Footer Links and Copyright */}
       <div className="w-full max-w-[1600px] mx-auto px-6 sm:px-8 md:px-10 lg:px-12 flex flex-col md:flex-row justify-between items-center gap-4 pt-8 border-t border-border/60">
-        <p className="text-sm text-secondary">
-          © {new Date().getFullYear()} Tadimarri Dadapeer. All rights reserved.
-        </p>
+        <div className="flex flex-col sm:flex-row items-center gap-3">
+          <p className="text-sm text-secondary">
+            © {new Date().getFullYear()} Tadimarri Dadapeer. All rights reserved.
+          </p>
+          <VisitorCounter />
+        </div>
         <div className="flex gap-6">
           <Link href="mailto:tadimarridadapeer@gmail.com" className="text-sm text-secondary hover:text-primary transition-colors">
             Email
