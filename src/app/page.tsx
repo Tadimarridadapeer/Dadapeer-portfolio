@@ -7,6 +7,7 @@ import { Writing } from "@/components/Writing";
 import { About } from "@/components/About";
 import { Posters } from "@/components/Posters";
 import { Contact } from "@/components/Contact";
+import { FeaturedOn } from "@/components/FeaturedOn";
 
 export default function Home() {
   return (
@@ -15,7 +16,7 @@ export default function Home() {
       <div className="block md:hidden py-10 border-t border-border">
         <CoreCompetencies />
       </div>
-      <div className="hidden md:block">
+      <div>
         <SelectedWork />
       </div>
       <div className="hidden md:block">
@@ -29,6 +30,8 @@ export default function Home() {
       <About />
       {/* <Posters /> */}
       <Contact />
+      {/* Featured On Badges & Directory Recognition Section (Last Before Footer) */}
+      <FeaturedOn />
     </div>
   );
 }
