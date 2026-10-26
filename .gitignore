@@ -34,3 +34,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Uploaded TIL documents
+/data/documents/*
+!/data/documents/.gitkeep

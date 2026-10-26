@@ -9,6 +9,7 @@ import { Menu, X, ArrowUpRight, ArrowDown } from "lucide-react";
 
 const desktopNavItems = [
   { name: "Case Studies", href: "/#work" },
+  { name: "Today I Learned", href: "/learning" },
   { name: "Writing", href: "/#writing" },
   { name: "About", href: "/#about" },
   { name: "Contact", href: "/#contact" },
@@ -16,6 +17,7 @@ const desktopNavItems = [
 
 const mobileNavItems = [
   { name: "Projects", href: "/projects", tag: "Page" },
+  { name: "Today I Learned (TIL)", href: "/learning", tag: "Page" },
   { name: "How I Built", href: "/how-i-built", tag: "Page" },
   { name: "About", href: "/#about", tag: "Scroll" },
   { name: "Writing", href: "/writing", tag: "Page" },
@@ -53,7 +55,11 @@ export function NavBar() {
             <Link
               key={item.name}
               href={item.href}
-              className="text-sm text-secondary hover:text-primary transition-colors"
+              className={`text-sm transition-colors ${
+                pathname === item.href
+                  ? "text-primary font-medium"
+                  : "text-secondary hover:text-primary"
+              }`}
             >
               {item.name}
             </Link>

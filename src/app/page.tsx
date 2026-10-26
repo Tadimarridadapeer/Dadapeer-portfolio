@@ -3,6 +3,7 @@ import { CoreCompetencies } from "@/components/CoreCompetencies";
 import { SelectedWork } from "@/components/SelectedWork";
 import { Engineering } from "@/components/Engineering";
 import { GitHubActivity } from "@/components/GitHubActivity";
+import { TodayILearnedPreview } from "@/components/TodayILearnedPreview";
 import { Writing } from "@/components/Writing";
 import { About } from "@/components/About";
 import { Posters } from "@/components/Posters";
@@ -24,6 +25,8 @@ export default function Home() {
       </div>
       {/* Live GitHub Real-Time Contributions & Activity */}
       <GitHubActivity />
+      {/* Today I Learned (TIL) Technical Journal Preview */}
+      <TodayILearnedPreview />
       <div className="hidden md:block">
         <Writing />
       </div>

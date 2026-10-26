@@ -1,0 +1,131 @@
+[
+  {
+    "id": "lesson-001-race-conditions",
+    "title": "Preventing Race Conditions with Optimistic Locking vs SELECT FOR UPDATE in PostgreSQL",
+    "slug": "preventing-race-conditions-optimistic-locking-postgres",
+    "summary": "A deep-dive into concurrency anomalies in high-throughput applications, comparing database row-level locking (pessimistic) with version-based optimistic concurrency control.",
+    "content": "## The Core Concurrency Problem\n\nWhen multiple concurrent requests attempt to read, modify, and write the same database record simultaneously, naive application logic introduces **race conditions** and lost updates.\n\nConsider an inventory or balance deduction query:\n1. Process A reads balance = $100.\n2. Process B reads balance = $100.\n3. Process A deducts $40 and writes balance = $60.\n4. Process B deducts $50 and writes balance = $50.\n\nThe customer deducted $90 total, but the final record reflects $50 instead of $10.\n\n---\n\n## Solution 1: Pessimistic Locking with SELECT ... FOR UPDATE\n\nIn PostgreSQL, `SELECT ... FOR UPDATE` locks the selected rows against concurrent modifications until the active transaction completes:\n\n```sql\nBEGIN;\n-- Locks this row specifically\nSELECT id, balance \nFROM accounts \nWHERE id = $1 \nFOR UPDATE;\n\n-- Application checks if balance >= amount\nUPDATE accounts \nSET balance = balance - $2, updated_at = NOW() \nWHERE id = $1;\n\nCOMMIT;\n```\n\n### When to use Pessimistic:\n- High conflict frequency where retries would waste resources.\n- Financial transactions with strict zero-tolerance for collision.\n\n---\n\n## Solution 2: Optimistic Concurrency Control (OCC)\n\nOptimistic locking avoids locking database rows by maintaining an integer `version` column:\n\n```sql\n-- Step 1: Read current state\nSELECT id, balance, version FROM accounts WHERE id = $1;\n\n-- Step 2: Atomic update conditional on version\nUPDATE accounts \nSET balance = balance - $amount, version = version + 1 \nWHERE id = $1 AND version = $current_version;\n```\n\nIf `rowCount === 0`, another transaction updated the row in between. The application catches this and retries or alerts the user.\n\n### When to use Optimistic:\n- Low-to-moderate contention.\n- Read-heavy workloads where keeping locks would degrade database throughput.",
+    "learning_date": "2026-10-18",
+    "published_at": "2026-10-18T10:30:00.000Z",
+    "category": "Backend Engineering",
+    "tags": [
+      "PostgreSQL",
+      "Concurrency",
+      "Database Architecture",
+      "SQL"
+    ],
+    "key_takeaways": [
+      "Pessimistic locking guarantees strict serial ordering but holds row locks across network roundtrips.",
+      "Optimistic locking requires zero locks during reads and detects conflicts atomically using version checks.",
+      "Always combine OCC with an exponential backoff retry loop in the application layer.",
+      "Never trust client-side balances: always execute deduction checks within the atomic update statement."
+    ],
+    "code_examples": [
+      {
+        "language": "typescript",
+        "caption": "Atomic deduction query with conditional safety guard",
+        "code": "// Safe atomic balance deduction without holding long locks\nexport async function deductBalance(userId: string, amount: number) {\n  const result = await db.query(\n    `UPDATE accounts \n     SET balance = balance - $1, version = version + 1 \n     WHERE id = $2 AND balance >= $1\n     RETURNING balance, version`,\n    [amount, userId]\n  );\n\n  if (result.rowCount === 0) {\n    throw new InsufficientFundsOrConcurrentConflictError();\n  }\n  return result.rows[0];\n}"
+      }
+    ],
+    "references": [
+      {
+        "title": "PostgreSQL Explicit Locking Documentation",
+        "url": "https://www.postgresql.org/docs/current/explicit-locking.html"
+      },
+      {
+        "title": "Martin Fowler: Optimistic Offline Lock Pattern",
+        "url": "https://martinfowler.com/eaaCatalog/optimisticOfflineLock.html"
+      }
+    ],
+    "status": "published",
+    "created_at": "2026-10-18T10:30:00.000Z",
+    "updated_at": "2026-10-18T10:30:00.000Z"
+  },
+  {
+    "id": "lesson-002-postgres-indexing",
+    "title": "PostgreSQL Indexing: Choosing Between B-Tree, GIN, and BRIN for Scale",
+    "slug": "postgresql-indexing-btree-gin-brin-strategies",
+    "summary": "Practical guide to database index types, internal data structures, and when to use B-Tree for equality/ranges, GIN for JSONB and full-text search, and BRIN for massive time-series tables.",
+    "content": "## Why Default B-Tree Indexes Aren't Always Enough\n\nWhile the standard **B-Tree** index covers 90% of relational queries (equality, ranges, sorting), modern AI and cloud platforms deal with unstructured JSONB, vector embeddings, and multi-gigabyte append-only audit logs.\n\nUnderstanding the internal tradeoffs between index algorithms prevents bloated indexes and unneeded memory pressure.\n\n---\n\n## 1. B-Tree (Balanced Tree)\n- **Best for:** Unique keys, IDs, timestamps, numeric ranges (`<, <=, =, >=, BETWEEN`), and exact text equality.\n- **Complexity:** O(log N) lookup, insertion, and deletion.\n- **Rule of thumb:** Create multi-column B-Tree indexes matching your `WHERE` and `ORDER BY` column order (leftmost prefix rule).\n\n```sql\nCREATE INDEX idx_users_active_created \nON users (is_active, created_at DESC) \nWHERE deleted_at IS NULL; -- Partial index saves disk space!\n```\n\n---\n\n## 2. GIN (Generalized Inverted Index)\n- **Best for:** JSONB documents, arrays, full-text search tokens, and tags.\n- Instead of mapping rows to values, GIN maps **values (keys/tokens) to matching row IDs**.\n- **Performance Tradeoff:** Slower on write/update due to multiple inverted entries, but blazingly fast on containment queries (`@>, ?`).\n\n```sql\n-- Accelerate JSONB payload queries\nCREATE INDEX idx_events_payload_gin \nON audit_events USING gin (payload jsonb_path_ops);\n\n-- Query that utilizes this index:\nSELECT * FROM audit_events \nWHERE payload @> '{\"action\": \"checkout\", \"status\": \"completed\"}';\n```\n\n---\n\n## 3. BRIN (Block Range Index)\n- **Best for:** Enormous append-only tables (10M+ rows) where rows are physically ordered on disk by timestamp or sequential ID.\n- **How it works:** Instead of indexing every single row, BRIN stores the min and max value for a block of disk pages (default: 128 pages = 1MB).\n- **Disk size:** Often **1/1000th** the size of a B-Tree index (e.g. 50 KB instead of 800 MB!).",
+    "learning_date": "2026-10-21",
+    "published_at": "2026-10-21T14:15:00.000Z",
+    "category": "Database & Storage",
+    "tags": [
+      "PostgreSQL",
+      "Database Indexing",
+      "Performance",
+      "JSONB",
+      "Query Optimization"
+    ],
+    "key_takeaways": [
+      "Use partial indexes with WHERE clauses to drastically reduce index size and write overhead.",
+      "GIN with jsonb_path_ops is up to 3x smaller than default GIN when only testing JSON containment (@>).",
+      "BRIN indexes are ideal for append-only logs, metrics, and event stores with natural chronological correlation.",
+      "Always inspect EXPLAIN (ANALYZE, BUFFERS) to verify index scans vs heap reads before optimizing."
+    ],
+    "code_examples": [
+      {
+        "language": "sql",
+        "caption": "Benchmarking query plan using EXPLAIN ANALYZE",
+        "code": "EXPLAIN (ANALYZE, BUFFERS, COSTS OFF)\nSELECT id, user_id, payload->>'action'\nFROM user_logs\nWHERE payload @> '{\"status\": \"error\"}'\nORDER BY created_at DESC\nLIMIT 50;"
+      }
+    ],
+    "references": [
+      {
+        "title": "The Internals of PostgreSQL: Index Types",
+        "url": "https://www.interdb.jp/pg/pgsql01.html"
+      },
+      {
+        "title": "Use The Index, Luke! - Guide to Database Performance",
+        "url": "https://use-the-index-luke.com/"
+      }
+    ],
+    "status": "published",
+    "created_at": "2026-10-21T14:15:00.000Z",
+    "updated_at": "2026-10-21T14:15:00.000Z"
+  },
+  {
+    "id": "lesson-003-agentic-loop",
+    "title": "Designing Reliable AI Agent Architectures: State Machines, Tool Calling & Cycle Prevention",
+    "slug": "designing-reliable-ai-agent-architectures-state-machines",
+    "summary": "Architecting resilient autonomous AI agents using finite state machines, structured schema validation with Zod, and deterministic loop limiters to avoid infinite hallucination traps.",
+    "content": "## Beyond Naive Prompt Chaining\n\nBuilding production-ready AI agents requires moving beyond raw OpenAI API loops to **deterministic state graphs**. Unbounded agent loops inevitably encounter:\n1. Circular tool calls (calling the same search query infinitely).\n2. Malformed parameters crashing JSON parsers.\n3. Context window exhaustion.\n\n---\n\n## Core Architecture Pattern: Explicit State Graph\n\nAn agent is fundamentally a state machine:\n- **State:** Stores current message history, intermediate tool results, execution depth counter, and pending user confirmation.\n- **Node:** A discrete step (e.g., `PlannerNode`, `ToolExecutorNode`, `EvaluatorNode`).\n- **Edge:** Conditional transition logic based on strict schema output.\n\n```\n       [ User Request ]\n              │\n              ▼\n       ┌──────────────┐\n       │ Planner Node │\n       └──────┬───────┘\n              │ Tool call detected?\n       ┌──────┴──────┐\n       ▼             ▼\n   [ Yes ]        [ No ] ───► [ Return Response ]\n       │\n       ▼\n ┌──────────────┐\n │ Execute Tool │\n └──────┬───────┘\n        │ Increment loop counter (max: 6)\n        ▼\n ┌──────────────┐\n │ Evaluate Ans │\n └──────────────┘\n```\n\n---\n\n## 3 Essential Safeguards:\n1. **Deterministic Depth Guard:** Every execution state carries a `stepCount`. If `stepCount >= MAX_STEPS`, immediately break the loop and trigger graceful human fallback.\n2. **Strict Tool Schemas:** Never accept raw unstructured tool inputs. Use JSON Schema or Zod with strict runtime validation.\n3. **Idempotency Keys:** For tools that execute state mutations (API writes, database updates, emails), compute an idempotency hash of `(tool_name, arguments_json)` to guarantee that accidental retries never produce duplicate side effects.",
+    "learning_date": "2026-10-24",
+    "published_at": "2026-10-24T18:00:00.000Z",
+    "category": "AI & LLMs",
+    "tags": [
+      "AI Agents",
+      "LLMs",
+      "System Design",
+      "State Machines",
+      "Zod",
+      "TypeScript"
+    ],
+    "key_takeaways": [
+      "Treat AI tool invocation as an untrusted client call requiring strict schema validation.",
+      "Hardcode circuit breakers and maximum iteration counts to protect against recursive agent loops.",
+      "Always isolate read-only tools from side-effect mutations requiring human approval.",
+      "Persist execution states to durable storage so long-running agent workflows can resume after server restarts."
+    ],
+    "code_examples": [
+      {
+        "language": "typescript",
+        "caption": "Deterministic Agent Loop Guard with Idempotency",
+        "code": "interface AgentState {\n  step: number;\n  maxSteps: number;\n  seenToolCalls: Set<string>;\n}\n\nexport function assertSafeToolExecution(\n  state: AgentState, \n  toolName: string, \n  args: Record<string, unknown>\n): void {\n  if (state.step >= state.maxSteps) {\n    throw new Error(`Agent exceeded maximum safety step limit of ${state.maxSteps}`);\n  }\n\n  const callSignature = `${toolName}:${JSON.stringify(args)}`;\n  if (state.seenToolCalls.has(callSignature)) {\n    throw new Error(`Duplicate recursive tool call detected for ${toolName}`);\n  }\n\n  state.seenToolCalls.add(callSignature);\n  state.step += 1;\n}"
+      }
+    ],
+    "references": [
+      {
+        "title": "Anthropic: Building Effective Agents",
+        "url": "https://www.anthropic.com/research/building-effective-agents"
+      },
+      {
+        "title": "LangGraph Architecture & Multi-Agent Design",
+        "url": "https://langchain-ai.github.io/langgraph/"
+      }
+    ],
+    "status": "published",
+    "created_at": "2026-10-24T18:00:00.000Z",
+    "updated_at": "2026-10-24T18:00:00.000Z"
+  }
+]
