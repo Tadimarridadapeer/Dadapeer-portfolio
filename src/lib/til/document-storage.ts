@@ -1,6 +1,7 @@
 import fs from "fs";
 import path from "path";
 import crypto from "crypto";
+import { getSupabaseAdmin } from "./supabase";
 
 const MAX_FILE_SIZE = 25 * 1024 * 1024; // 25 MB
 
@@ -14,8 +15,9 @@ const ALLOWED_MIME_TYPES: Record<string, string> = {
 
 const ALLOWED_EXTENSIONS = new Set([".pdf", ".md", ".txt", ".docx", ".doc"]);
 
-// Local storage directory for documents
+// Local storage directory for documents fallback
 const DOCUMENTS_DIR = path.join(process.cwd(), "data", "documents");
+const SUPABASE_BUCKET = "til-documents";
 
 function ensureDirectoryExists(dirPath: string) {
   if (!fs.existsSync(dirPath)) {
@@ -24,7 +26,6 @@ function ensureDirectoryExists(dirPath: string) {
 }
 
 export function sanitizeFilename(name: string): string {
-  // Strip path traversal characters and non-alphanumeric except safe symbols
   const ext = path.extname(name).toLowerCase();
   const base = path.basename(name, ext)
     .replace(/[^a-zA-Z0-9_\-\s]/g, "")
@@ -43,7 +44,7 @@ export interface StoredDocument {
 }
 
 /**
- * Validates and saves an uploaded document buffer to disk
+ * Validates and saves an uploaded document buffer to Supabase Storage or disk
  */
 export async function saveDocument(
   buffer: Buffer,
@@ -70,14 +71,41 @@ export async function saveDocument(
     }
   }
 
-  // Ensure documents directory exists
-  ensureDirectoryExists(DOCUMENTS_DIR);
-
   const cleanName = sanitizeFilename(originalFilename);
   const uniquePrefix = `${Date.now()}-${crypto.randomBytes(4).toString("hex")}`;
   const storedFilename = `${uniquePrefix}-${cleanName}`;
-  const absolutePath = path.join(DOCUMENTS_DIR, storedFilename);
 
+  // Attempt upload to Supabase Storage first if configured
+  const supabase = getSupabaseAdmin();
+  if (supabase) {
+    try {
+      const { data, error } = await supabase.storage
+        .from(SUPABASE_BUCKET)
+        .upload(storedFilename, buffer, {
+          contentType: mimeType,
+          upsert: true,
+        });
+
+      if (!error && data) {
+        // Also keep local copy for instant streaming
+        ensureDirectoryExists(DOCUMENTS_DIR);
+        await fs.promises.writeFile(path.join(DOCUMENTS_DIR, storedFilename), buffer);
+
+        return {
+          storagePath: storedFilename,
+          filename: originalFilename,
+          mimeType,
+          size: buffer.length,
+        };
+      }
+    } catch (err) {
+      console.warn("Supabase storage upload failed, saving locally:", err);
+    }
+  }
+
+  // Local fallback
+  ensureDirectoryExists(DOCUMENTS_DIR);
+  const absolutePath = path.join(DOCUMENTS_DIR, storedFilename);
   await fs.promises.writeFile(absolutePath, buffer);
 
   return {
@@ -92,7 +120,6 @@ export async function saveDocument(
  * Retrieve document absolute path and metadata
  */
 export function getDocumentAbsolutePath(storagePath: string): string | null {
-  // Guard against path traversal
   const safeFilename = path.basename(storagePath);
   const absolutePath = path.join(DOCUMENTS_DIR, safeFilename);
 
@@ -103,11 +130,23 @@ export function getDocumentAbsolutePath(storagePath: string): string | null {
 }
 
 /**
- * Safely delete an existing document from disk
+ * Safely delete an existing document from Supabase Storage and disk
  */
 export async function deleteDocument(storagePath: string): Promise<boolean> {
+  const safeFilename = path.basename(storagePath);
+
+  // Delete from Supabase Storage if configured
+  const supabase = getSupabaseAdmin();
+  if (supabase) {
+    try {
+      await supabase.storage.from(SUPABASE_BUCKET).remove([safeFilename]);
+    } catch (err) {
+      console.warn("Supabase storage delete warning:", err);
+    }
+  }
+
+  // Delete from disk
   try {
-    const safeFilename = path.basename(storagePath);
     const absolutePath = path.join(DOCUMENTS_DIR, safeFilename);
     if (fs.existsSync(absolutePath)) {
       await fs.promises.unlink(absolutePath);

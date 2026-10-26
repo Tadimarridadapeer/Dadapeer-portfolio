@@ -6,9 +6,11 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "seed:supabase": "node scripts/seed-supabase.mjs"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.118.0",
     "clsx": "^2.1.1",
     "framer-motion": "^12.42.2",
     "lucide-react": "^1.24.0",

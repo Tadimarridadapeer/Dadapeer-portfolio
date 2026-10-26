@@ -9,6 +9,7 @@ import {
   LessonStatus 
 } from "./types";
 import { deleteDocument } from "./document-storage";
+import { getSupabaseAdmin, getSupabaseClient } from "./supabase";
 
 const DATA_DIR = path.join(process.cwd(), "data");
 const DB_FILE = path.join(DATA_DIR, "til-lessons.json");
@@ -336,7 +337,6 @@ async function readAllEntries(): Promise<LearningEntry[]> {
 
 async function writeAllEntries(entries: LearningEntry[]): Promise<void> {
   ensureDbFileExists();
-  // Atomic write using a temp file
   const tempPath = `${DB_FILE}.${Date.now()}.${crypto.randomBytes(4).toString("hex")}.tmp`;
   await fs.promises.writeFile(tempPath, JSON.stringify(entries, null, 2), "utf8");
   await fs.promises.rename(tempPath, DB_FILE);
@@ -353,6 +353,27 @@ export async function generateUniqueSlug(title: string, existingId?: string): Pr
     .replace(/[\s_-]+/g, "-")
     .replace(/^-+|-+$/g, "")
     .slice(0, 75);
+
+  const supabase = getSupabaseAdmin();
+  if (supabase) {
+    try {
+      let slug = base || "lesson";
+      let counter = 1;
+      let exists = true;
+      while (exists) {
+        let q = supabase.from("learning_entries").select("id").eq("slug", slug);
+        if (existingId) q = q.neq("id", existingId);
+        const { data } = await q;
+        if (!data || data.length === 0) {
+          return slug;
+        }
+        slug = `${base}-${counter}`;
+        counter++;
+      }
+    } catch (e) {
+      // Fallback to local unique check
+    }
+  }
 
   const entries = await readAllEntries();
   let slug = base || "lesson";
@@ -377,7 +398,7 @@ export interface GetLessonsFilter {
 }
 
 /**
- * Fetch lessons with sorting, filtering, and search
+ * Fetch lessons from Supabase (or fallback local database) with filtering and search
  */
 export async function getLessons(options: GetLessonsFilter = {}): Promise<{ lessons: LearningEntry[]; total: number }> {
   const {
@@ -390,24 +411,53 @@ export async function getLessons(options: GetLessonsFilter = {}): Promise<{ less
     offset = 0,
   } = options;
 
+  // 1. Try Supabase Postgres first if configured
+  const supabase = getSupabaseAdmin() || getSupabaseClient();
+  if (supabase) {
+    try {
+      let query = supabase.from("learning_entries").select("*", { count: "exact" });
+
+      if (status !== "all") {
+        query = query.eq("status", status);
+      }
+      if (category && category !== "All") {
+        query = query.ilike("category", category);
+      }
+      if (tag) {
+        query = query.contains("tags", [tag]);
+      }
+      if (search && search.trim()) {
+        const q = search.trim();
+        query = query.or(`title.ilike.%${q}%,summary.ilike.%${q}%,content.ilike.%${q}%`);
+      }
+
+      query = query.order("learning_date", { ascending: sort === "oldest" });
+      query = query.range(offset, offset + limit - 1);
+
+      const { data, count, error } = await query;
+      if (!error && data && data.length > 0) {
+        return { lessons: data as LearningEntry[], total: count ?? data.length };
+      }
+    } catch (err) {
+      console.warn("Supabase query fallback to local DB:", err);
+    }
+  }
+
+  // 2. Local database fallback
   let list = await readAllEntries();
 
-  // Status filter (public default only published; admin can request "all" or "draft")
   if (status !== "all") {
     list = list.filter((e) => e.status === status);
   }
 
-  // Category filter
   if (category && category !== "All") {
     list = list.filter((e) => e.category.toLowerCase() === category.toLowerCase());
   }
 
-  // Tag filter
   if (tag) {
     list = list.filter((e) => e.tags.some((t) => t.toLowerCase() === tag.toLowerCase()));
   }
 
-  // Search filter (in title, summary, tags, content)
   if (search && search.trim()) {
     const q = search.toLowerCase().trim();
     list = list.filter((e) => {
@@ -421,7 +471,6 @@ export async function getLessons(options: GetLessonsFilter = {}): Promise<{ less
     });
   }
 
-  // Sorting: newest or oldest by learning_date, fallback created_at
   list.sort((a, b) => {
     const dateA = new Date(a.learning_date).getTime();
     const dateB = new Date(b.learning_date).getTime();
@@ -438,6 +487,22 @@ export async function getLessons(options: GetLessonsFilter = {}): Promise<{ less
  * Get single lesson by slug
  */
 export async function getLessonBySlug(slug: string, requirePublished = true): Promise<LearningEntry | null> {
+  const supabase = getSupabaseAdmin() || getSupabaseClient();
+  if (supabase) {
+    try {
+      let query = supabase.from("learning_entries").select("*").eq("slug", slug);
+      if (requirePublished) {
+        query = query.eq("status", "published");
+      }
+      const { data, error } = await query.single();
+      if (!error && data) {
+        return data as LearningEntry;
+      }
+    } catch (err) {
+      console.warn("Supabase getLessonBySlug fallback:", err);
+    }
+  }
+
   const entries = await readAllEntries();
   const entry = entries.find((e) => e.slug === slug);
   if (!entry) return null;
@@ -449,6 +514,16 @@ export async function getLessonBySlug(slug: string, requirePublished = true): Pr
  * Get single lesson by ID
  */
 export async function getLessonById(id: string): Promise<LearningEntry | null> {
+  const supabase = getSupabaseAdmin();
+  if (supabase) {
+    try {
+      const { data, error } = await supabase.from("learning_entries").select("*").eq("id", id).single();
+      if (!error && data) {
+        return data as LearningEntry;
+      }
+    } catch (err) {}
+  }
+
   const entries = await readAllEntries();
   return entries.find((e) => e.id === id) || null;
 }
@@ -457,10 +532,7 @@ export async function getLessonById(id: string): Promise<LearningEntry | null> {
  * Create a new lesson
  */
 export async function createLesson(input: CreateLessonInput): Promise<LearningEntry> {
-  const entries = await readAllEntries();
-  const id = `til-${Date.now()}-${crypto.randomBytes(3).toString("hex")}`;
   const now = new Date().toISOString();
-
   let slug = input.slug ? input.slug.trim() : "";
   if (!slug) {
     slug = await generateUniqueSlug(input.title);
@@ -469,7 +541,7 @@ export async function createLesson(input: CreateLessonInput): Promise<LearningEn
   }
 
   const newEntry: LearningEntry = {
-    id,
+    id: `til-${Date.now()}-${crypto.randomBytes(3).toString("hex")}`,
     title: input.title.trim(),
     slug,
     summary: input.summary.trim(),
@@ -491,6 +563,25 @@ export async function createLesson(input: CreateLessonInput): Promise<LearningEn
     updated_at: now,
   };
 
+  // Sync to Supabase if configured
+  const supabase = getSupabaseAdmin();
+  if (supabase) {
+    try {
+      const { data, error } = await supabase.from("learning_entries").insert(newEntry).select().single();
+      if (!error && data) {
+        // Also keep local copy updated
+        const entries = await readAllEntries();
+        entries.unshift(data as LearningEntry);
+        await writeAllEntries(entries);
+        return data as LearningEntry;
+      }
+    } catch (err) {
+      console.warn("Supabase createLesson fallback to local:", err);
+    }
+  }
+
+  // Local write
+  const entries = await readAllEntries();
   entries.unshift(newEntry);
   await writeAllEntries(entries);
   return newEntry;
@@ -500,13 +591,10 @@ export async function createLesson(input: CreateLessonInput): Promise<LearningEn
  * Update an existing lesson
  */
 export async function updateLesson(id: string, input: UpdateLessonInput): Promise<LearningEntry | null> {
-  const entries = await readAllEntries();
-  const index = entries.findIndex((e) => e.id === id);
-  if (index === -1) return null;
+  const current = await getLessonById(id);
+  if (!current) return null;
 
-  const current = entries[index];
   const now = new Date().toISOString();
-
   let slug = current.slug;
   if (input.slug && input.slug.trim() !== current.slug) {
     slug = await generateUniqueSlug(input.slug, id);
@@ -514,13 +602,11 @@ export async function updateLesson(id: string, input: UpdateLessonInput): Promis
     slug = await generateUniqueSlug(input.title, id);
   }
 
-  // If status is transitioning to published, set published_at if not present
   let published_at = current.published_at;
   if (input.status === "published" && current.status !== "published" && !published_at) {
     published_at = now;
   }
 
-  // If document is being replaced/removed, delete old file from disk
   if (input.document_path !== undefined && input.document_path !== current.document_path && current.document_path) {
     await deleteDocument(current.document_path);
   }
@@ -533,8 +619,33 @@ export async function updateLesson(id: string, input: UpdateLessonInput): Promis
     updated_at: now,
   };
 
-  entries[index] = updated;
-  await writeAllEntries(entries);
+  // Supabase update if configured
+  const supabase = getSupabaseAdmin();
+  if (supabase) {
+    try {
+      const { data, error } = await supabase.from("learning_entries").update(updated).eq("id", id).select().single();
+      if (!error && data) {
+        // Also update local copy
+        const entries = await readAllEntries();
+        const idx = entries.findIndex((e) => e.id === id);
+        if (idx !== -1) {
+          entries[idx] = data as LearningEntry;
+          await writeAllEntries(entries);
+        }
+        return data as LearningEntry;
+      }
+    } catch (err) {
+      console.warn("Supabase update fallback to local:", err);
+    }
+  }
+
+  // Local update
+  const entries = await readAllEntries();
+  const idx = entries.findIndex((e) => e.id === id);
+  if (idx !== -1) {
+    entries[idx] = updated;
+    await writeAllEntries(entries);
+  }
   return updated;
 }
 
@@ -542,14 +653,23 @@ export async function updateLesson(id: string, input: UpdateLessonInput): Promis
  * Delete a lesson and associated document
  */
 export async function deleteLesson(id: string): Promise<boolean> {
-  const entries = await readAllEntries();
-  const target = entries.find((e) => e.id === id);
+  const target = await getLessonById(id);
   if (!target) return false;
 
   if (target.document_path) {
     await deleteDocument(target.document_path);
   }
 
+  const supabase = getSupabaseAdmin();
+  if (supabase) {
+    try {
+      await supabase.from("learning_entries").delete().eq("id", id);
+    } catch (err) {
+      console.warn("Supabase delete warning:", err);
+    }
+  }
+
+  const entries = await readAllEntries();
   const filtered = entries.filter((e) => e.id !== id);
   await writeAllEntries(filtered);
   return true;
@@ -559,8 +679,7 @@ export async function deleteLesson(id: string): Promise<boolean> {
  * Toggle publication status between published and draft
  */
 export async function toggleLessonStatus(id: string): Promise<LearningEntry | null> {
-  const entries = await readAllEntries();
-  const target = entries.find((e) => e.id === id);
+  const target = await getLessonById(id);
   if (!target) return null;
 
   const newStatus: LessonStatus = target.status === "published" ? "draft" : "published";
@@ -571,16 +690,14 @@ export async function toggleLessonStatus(id: string): Promise<LearningEntry | nu
  * Calculate genuine statistics strictly from actual published records
  */
 export async function getLearningStats(): Promise<LearningStats> {
-  const entries = await readAllEntries();
-  const published = entries.filter((e) => e.status === "published");
-  const drafts = entries.filter((e) => e.status === "draft");
+  const { lessons: allPublished } = await getLessons({ status: "published", limit: 500 });
+  const { lessons: allDrafts } = await getLessons({ status: "draft", limit: 500 });
 
-  // Category counts
   const catMap: Record<string, number> = {};
   const tagMap: Record<string, number> = {};
   const activityByDate: Record<string, number> = {};
 
-  published.forEach((e) => {
+  allPublished.forEach((e) => {
     catMap[e.category] = (catMap[e.category] || 0) + 1;
     e.tags.forEach((t) => {
       tagMap[t] = (tagMap[t] || 0) + 1;
@@ -600,20 +717,17 @@ export async function getLearningStats(): Promise<LearningStats> {
     .map(([name, count]) => ({ name, count }))
     .sort((a, b) => b.count - a.count);
 
-  // Latest published lesson
-  const sortedPublished = [...published].sort((a, b) => {
+  const sortedPublished = [...allPublished].sort((a, b) => {
     return new Date(b.learning_date).getTime() - new Date(a.learning_date).getTime();
   });
   const latestLesson = sortedPublished[0] || null;
 
-  // Calculate actual consecutive streak days strictly from underlying published dates
   let streakDays = 0;
-  if (published.length > 0) {
-    const dates = Array.from(new Set(published.map((e) => e.learning_date))).sort().reverse();
+  if (allPublished.length > 0) {
+    const dates = Array.from(new Set(allPublished.map((e) => e.learning_date))).sort().reverse();
     const today = new Date().toISOString().slice(0, 10);
     const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
 
-    // Only count streak if the most recent entry was today or yesterday
     if (dates[0] === today || dates[0] === yesterday) {
       let currentCheck = new Date(dates[0]);
       for (const dStr of dates) {
@@ -629,22 +743,13 @@ export async function getLearningStats(): Promise<LearningStats> {
   }
 
   return {
-    totalPublished: published.length,
-    totalDrafts: drafts.length,
-    totalLessons: entries.length,
+    totalPublished: allPublished.length,
+    totalDrafts: allDrafts.length,
+    totalLessons: allPublished.length + allDrafts.length,
     categories,
     tags,
     latestLesson,
     activityByDate,
     streakDays,
   };
-}
-
-/**
- * Calculate estimated reading time in minutes
- */
-export function estimateReadingTime(text: string): number {
-  if (!text) return 1;
-  const words = text.trim().split(/\s+/).length;
-  return Math.max(1, Math.ceil(words / 200));
 }
