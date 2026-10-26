@@ -30,7 +30,7 @@ export function NavBar() {
 
   return (
     <header className="sticky top-0 z-50 w-full bg-background/80 backdrop-blur-md border-b border-border">
-      <div className="w-full max-w-[1600px] mx-auto px-6 sm:px-8 md:px-10 lg:px-12 flex h-16 items-center justify-between">
+      <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-8 md:px-10 lg:px-12 flex h-16 items-center justify-between">
         <Link 
           href="/" 
           onClick={() => setIsOpen(false)}

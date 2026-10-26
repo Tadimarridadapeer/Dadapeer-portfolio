@@ -1,5 +1,27 @@
 [
   {
+    "id": "til-1793003629848-b8fa3c",
+    "title": "Race Conditions",
+    "slug": "race-conditions",
+    "summary": "A race condition happens when two or more operations access or modify shared data at the same time, and the final result depends on the order in which they execute.\n\nIn simple words: Your code works correctly when requests run one by one, but can fail when requests run simultaneously.",
+    "content": "",
+    "learning_date": "2026-10-26",
+    "published_at": "2026-10-26T08:33:49.268Z",
+    "category": "Backend Engineering",
+    "tags": [],
+    "key_takeaways": [],
+    "code_examples": [],
+    "references": [],
+    "cover_image_path": null,
+    "document_path": "1793003585536-bdc492b5-day1_race_conditions_carousel-1.pdf",
+    "document_filename": "day1_race_conditions_carousel (1).pdf",
+    "document_mime_type": "application/pdf",
+    "document_size": 38575,
+    "status": "published",
+    "created_at": "2026-10-26T08:33:49.268Z",
+    "updated_at": "2026-10-26T08:33:49.268Z"
+  },
+  {
     "id": "lesson-001-race-conditions",
     "title": "Preventing Race Conditions with Optimistic Locking vs SELECT FOR UPDATE in PostgreSQL",
     "slug": "preventing-race-conditions-optimistic-locking-postgres",

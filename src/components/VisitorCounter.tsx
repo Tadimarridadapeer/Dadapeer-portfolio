@@ -78,7 +78,7 @@ export function VisitorCounter({ className = "" }: { className?: string }) {
   if (loading && !visitorNumber) {
     return (
       <div
-        className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-border/80 bg-white/70 backdrop-blur-md text-xs font-mono text-secondary/70 ${className}`}
+        className={`inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full border border-border/80 bg-white/70 backdrop-blur-md text-[11px] sm:text-xs font-mono text-secondary/70 ${className}`}
       >
         <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
         <span>Connecting...</span>
@@ -93,14 +93,15 @@ export function VisitorCounter({ className = "" }: { className?: string }) {
       initial={{ opacity: 0, scale: 0.96 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.4 }}
-      className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-border/80 bg-white/90 backdrop-blur-md shadow-[0_2px_10px_-3px_rgba(0,0,0,0.06)] text-xs font-sans text-secondary select-none ${className}`}
+      className={`inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-full border border-border/80 bg-white/90 backdrop-blur-md shadow-[0_2px_10px_-3px_rgba(0,0,0,0.06)] text-[11px] sm:text-xs font-sans text-secondary select-none ${className}`}
     >
-      <span className="relative flex h-2 w-2">
+      <span className="relative flex h-2 w-2 shrink-0">
         <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
         <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
       </span>
       <span>
-        You&apos;re the <strong className="text-primary font-semibold">{getOrdinal(visitorNumber)}</strong> visitor
+        <span className="hidden xs:inline">You&apos;re the </span>
+        <strong className="text-primary font-semibold">{getOrdinal(visitorNumber)}</strong> visitor
       </span>
     </motion.div>
   );

@@ -43,7 +43,7 @@ export default function RootLayout({
         <HelloSplash />
         <NavBar />
         <main className="flex-1 flex flex-col items-center w-full">
-          <div className="w-full max-w-[1600px] px-6 sm:px-8 md:px-10 lg:px-12 mx-auto">
+          <div className="w-full max-w-[1600px] px-4 sm:px-8 md:px-10 lg:px-12 mx-auto">
             {children}
           </div>
         </main>
