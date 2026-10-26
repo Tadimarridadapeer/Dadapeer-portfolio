@@ -30,8 +30,10 @@ export default function Home() {
       <About />
       {/* <Posters /> */}
       <Contact />
-      {/* Featured On Badges & Directory Recognition Section (Last Before Footer) */}
-      <FeaturedOn />
+      {/* Featured On Badges & Directory Recognition Section (Hidden for now) */}
+      <div className="hidden">
+        <FeaturedOn />
+      </div>
     </div>
   );
 }
