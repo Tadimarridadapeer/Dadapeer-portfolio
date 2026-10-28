@@ -1,5 +1,29 @@
 [
   {
+    "id": "til-1793200017763-a523d4",
+    "title": "Understanding Database Deadlocks",
+    "slug": "understanding-database-deadlocks",
+    "summary": "A visual learning resource exploring database deadlocks, how concurrent transactions can block one another, and how developers can reduce the risk in real-world applications.\n\nThrough diagrams and SQL examples, this project explains lock conflicts, consistent lock ordering, short transactions, and safe recovery from deadlock errors.\n\nWhat I Learned\n\nHow deadlocks occur between concurrent database transactions.\n\nThe difference between race conditions and deadlocks.\n\nHow row-level locks and transaction ordering affect concurrency.\n\nHow to reduce deadlock risks through consistent locking strategies.\n\nWhy rollback and bounded retries are important for reliable backend systems.\n\nKey Takeaway\n\nReliable software is not just about making code work. It is about handling concurrency, failures, and unexpected execution patterns safely.",
+    "content": "",
+    "learning_date": "2026-10-28",
+    "published_at": "2026-10-28T15:06:57.501Z",
+    "category": "Backend Engineering",
+    "tags": [
+      "Database"
+    ],
+    "key_takeaways": [],
+    "code_examples": [],
+    "references": [],
+    "cover_image_path": null,
+    "document_path": "1793200009591-ace9c64b-day2_deadlocks_notes.pdf",
+    "document_filename": "day2_deadlocks_notes.pdf",
+    "document_mime_type": "application/pdf",
+    "document_size": 38612,
+    "status": "published",
+    "created_at": "2026-10-28T15:06:57.501Z",
+    "updated_at": "2026-10-28T15:06:57.501Z"
+  },
+  {
     "id": "til-1793003629848-b8fa3c",
     "title": "Race Conditions",
     "slug": "race-conditions",

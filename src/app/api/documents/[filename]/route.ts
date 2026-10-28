@@ -3,6 +3,7 @@ import fs from "fs";
 import { getDocumentAbsolutePath } from "@/lib/til/document-storage";
 import { getLessons } from "@/lib/til/db";
 import { isAuthenticatedAdmin } from "@/lib/til/auth";
+import { getSupabaseAdmin } from "@/lib/til/supabase";
 
 export const dynamic = "force-dynamic";
 
@@ -14,11 +15,6 @@ export async function GET(
     const { filename } = await params;
     if (!filename) {
       return new NextResponse("Filename is required", { status: 400 });
-    }
-
-    const absolutePath = getDocumentAbsolutePath(filename);
-    if (!absolutePath) {
-      return new NextResponse("Document not found", { status: 404 });
     }
 
     // Security check: Find the lesson associated with this document
@@ -34,7 +30,33 @@ export async function GET(
       }
     }
 
-    const fileBuffer = await fs.promises.readFile(absolutePath);
+    let fileBuffer: Buffer | null = null;
+    const absolutePath = getDocumentAbsolutePath(filename);
+
+    if (absolutePath && fs.existsSync(absolutePath)) {
+      fileBuffer = await fs.promises.readFile(absolutePath);
+    } else {
+      // Fallback: Stream directly from Supabase Storage bucket
+      const supabase = getSupabaseAdmin();
+      if (supabase) {
+        try {
+          const { data: fileBlob, error: storageErr } = await supabase.storage
+            .from("til-documents")
+            .download(filename);
+
+          if (!storageErr && fileBlob) {
+            const arrayBuffer = await fileBlob.arrayBuffer();
+            fileBuffer = Buffer.from(arrayBuffer);
+          }
+        } catch (storageException) {
+          console.warn("Supabase storage retrieval fallback failed:", storageException);
+        }
+      }
+    }
+
+    if (!fileBuffer) {
+      return new NextResponse("Document not found", { status: 404 });
+    }
     const mimeType = associatedLesson?.document_mime_type || "application/octet-stream";
     const downloadName = associatedLesson?.document_filename || filename;
 
@@ -42,7 +64,7 @@ export async function GET(
     const isDownload = searchParams.get("download") === "true";
     const dispositionType = isDownload ? "attachment" : "inline";
 
-    return new NextResponse(fileBuffer, {
+    return new NextResponse(new Uint8Array(fileBuffer), {
       status: 200,
       headers: {
         "Content-Type": mimeType,
