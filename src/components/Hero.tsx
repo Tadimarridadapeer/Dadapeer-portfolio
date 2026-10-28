@@ -131,20 +131,20 @@ export function Hero() {
         </motion.p>
 
         {/* High-Craft Call To Actions */}
-        <motion.div variants={itemVariants} className="flex flex-col xs:flex-row gap-3 sm:gap-4 items-stretch xs:items-center justify-center w-full max-w-sm sm:max-w-none mb-10 sm:mb-14 px-4 sm:px-0">
+        <motion.div variants={itemVariants} className="flex flex-row flex-wrap sm:flex-nowrap items-center justify-center gap-3 sm:gap-4 mb-9 sm:mb-12 px-2">
           <Link
             href="/projects"
-            className="inline-flex items-center justify-center h-11 sm:h-12 px-6 sm:px-7 rounded-full bg-primary text-background font-medium hover:bg-primary/90 transition-all hover:scale-[1.02] active:scale-[0.98] shadow-md shadow-primary/15 text-sm sm:text-base group text-center"
+            className="inline-flex items-center justify-center h-10 sm:h-11 px-5 sm:px-6 rounded-full bg-primary text-background font-medium hover:bg-primary/90 transition-all hover:scale-[1.02] active:scale-[0.98] shadow-sm shadow-primary/15 text-xs sm:text-sm whitespace-nowrap group text-center"
           >
             <span>View Work</span>
-            <span className="ml-2 px-2 py-0.5 rounded-full bg-white/20 text-xs font-mono">6+</span>
+            <span className="ml-2 px-1.5 sm:px-2 py-0.5 rounded-full bg-white/20 text-[10px] sm:text-xs font-mono">6+</span>
           </Link>
           <Link
             href="#contact"
-            className="inline-flex items-center justify-center h-11 sm:h-12 px-6 sm:px-7 rounded-full border border-border bg-white/90 backdrop-blur-md text-primary font-medium hover:bg-secondary/5 hover:border-secondary/40 transition-all group text-sm sm:text-base shadow-xs text-center"
+            className="inline-flex items-center justify-center h-10 sm:h-11 px-5 sm:px-6 rounded-full border border-border bg-white/90 backdrop-blur-md text-primary font-medium hover:bg-secondary/5 hover:border-secondary/40 transition-all group text-xs sm:text-sm shadow-xs whitespace-nowrap text-center"
           >
             <span>Get in Touch</span>
-            <ArrowRight className="ml-2 w-4 h-4 text-secondary group-hover:text-primary group-hover:translate-x-1 transition-all duration-200" />
+            <ArrowRight className="ml-1.5 sm:ml-2 w-3.5 h-3.5 sm:w-4 sm:h-4 text-secondary group-hover:text-primary group-hover:translate-x-0.5 transition-all duration-200" />
           </Link>
         </motion.div>
 
